@@ -1,0 +1,56 @@
+{
+  "name": "vue-scrollable-container2",
+  "version": "0.0.1",
+  "private": false,
+  "scripts": {
+    "build": "vue-cli-service build --target lib --name vscrollbar src/VScrollbar.vue"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikjh/vue-scrollable-container2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nikjh/vue-scrollable-container2/issues"
+  },
+  "homepage": "https://github.com/nikjh/vue-scrollable-container2#readme.md",
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.1.0",
+    "@vue/cli-plugin-eslint": "^4.1.0",
+    "@vue/cli-service": "^4.1.0",
+    "autoprefixer": "^9.7.3",
+    "babel-eslint": "^10.0.3",
+    "core-js": "^3.4.4",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "node-sass": "^4.13.0",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^8.0.0",
+    "vue": "^2.6.10",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "main": "dist/vscrollbar.umd.js",
+  "unpkg": "dist/vscrollbar.umd.min.js",
+  "keywords": [
+    "No dependencies",
+    "Vue",
+    "Scrollbar"
+  ],
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
