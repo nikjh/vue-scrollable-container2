@@ -27,7 +27,7 @@ npm install --save vue-scrollable-container2
 ```html
 <div id="app">
   <vscrolbar>
-    Your content
+    Something
   </vscrolbar>
 </div>
 
