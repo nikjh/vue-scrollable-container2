@@ -1,7 +1,12 @@
+
 # Vue Scrollable container
 
-It's component for create custom scrollable area in your app.
-Uses native js methods for scrolling. No dependencies.
+It's component to create custom scrollable area in your app.
+Uses native js methods for scrolling. Has zero dependencies.
+
+[DEMO](https://rognikita.tk/static/demos/vscrollbar)
+
+[CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -10,13 +15,14 @@ Uses native js methods for scrolling. No dependencies.
 ```html
 <script src="vue.js"></script>
 <script src="vscrollbar.umd.min.js"></script>
+<link rel="stylesheet" href="vscrollbar.min.css" />
 ```
 
 
 ### npm
 
 ```
-npm install --save vue-scrollable-container2
+npm i vue-scrollable-container2
 ```
 
 
@@ -33,10 +39,14 @@ npm install --save vue-scrollable-container2
 
 <script src="vue.js"></script>
 <script src="vscrollbar.umd.min.js"></script>
+<link rel="stylesheet" href="vscrollbar.min.css" />
+
 <script>
-Vue.use(VScrollbar);
 new Vue({
-  el: '#app'
+  el: '#app',
+  components: {
+    vscrollbar,
+  },
 });
 </script>
 ```
@@ -56,25 +66,49 @@ import VScrollbar from 'vue-scrollable-container2';
 
 export default {
   components: {
-    VScrollbar
-  }
-}
+    VScrollbar,
+  },
+};
 </script>
 ```
 
 
 ## Props
 
-| Props                  | Type              | Default         | Description                    |
-|------------------------|-------------------|-----------------|--------------------------------|
-| `tag`                  | `String`          | `"div"`         | Basical tag of scrollable area |
-| `scroll-offset-height` | `String, Number`  | `null`          | Height offset for scroll area. Uses if you need add paddings to container or any style which may affect on wrapper size. |
+| Props | Type | Default | Description |
+|---|---|---|---|
+| `tag` | `String` | `"div"` | Basic tag of scrollable area |
+| `scroll-offset-height` | `String, Number` | `null` | Offsetted height of scroll area. You need to add paddings to the container or any style which may affect wrapper size. |
+
+## Result
+
+```html
+<div class="vs-container">
+  <div class="vs-wrapper">
+    <div class="vs-content">
+      Something
+    </div>
+  </div>
+  <div class="vs-scroll vs-scroll--x"></div>
+  <div class="vs-scroll vs-scroll--y"></div>
+</div>
+
+```
+
+## Props examples
+**tag**
+`tag="section"` return `<section class="vs-conatiner">`
+***NOTE:*** Other parts of structure will not changes.
+
+**scroll-offset-height**
+Your container has 300px max-height and 10px by top and bottom. Offsetted height must be 280px.
 
 ## License
 
-MIT
+[MIT](LICENSE)
 
 
 ## Author
 
 Nikita Rogachev
+
