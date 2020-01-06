@@ -1,6 +1,6 @@
 {
   "name": "vue-scrollable-container2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "scripts": {
     "build": "vue-cli-service build --target lib --name vscrollbar src/VScrollbar.vue"
