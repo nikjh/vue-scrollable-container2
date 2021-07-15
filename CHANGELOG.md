@@ -1,5 +1,5 @@
 # Changelog
-## [1.0.2] - 2021-07-12
+## [2.0.0] - 2021-07-12
 ### Removed
 - scrollOffsetHeight property.
 - init method.
