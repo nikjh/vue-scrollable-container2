@@ -78,7 +78,9 @@ export default {
 | Props | Type | Default | Description |
 |---|---|---|---|
 | `tag` | `String` | `"div"` | Basic tag of scrollable area |
-| `scroll-offset-height` | `String, Number` | `null` | Offsetted height of scroll area. You need to add paddings to the container or any style which may affect wrapper size. |
+| `content-style` | `Object` | `{}` | Custom CSS styles for vs-content |
+| `bar-color` | `String` | `'rgba(26, 115, 232, .6)'` | CSS color for backgrounding bars |
+| `offsetting-bar` | `Boolean` | `false` | Enable calculating offsets of container for rendering bars by those sizes |
 
 ## Result
 
@@ -95,13 +97,10 @@ export default {
 
 ```
 
-## Props examples
+## Notes
 **tag**
 `tag="section"` return `<section class="vs-conatiner">`
-***NOTE:*** Other parts of structure will not changes.
-
-**scroll-offset-height**
-Your container has 300px max-height and 10px by top and bottom. Offsetted height must be 280px.
+Other parts of structure will not changes.
 
 ## License
 

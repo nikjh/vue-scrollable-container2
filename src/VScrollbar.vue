@@ -79,15 +79,15 @@ export default {
       this.contentStyles = this.contentStyle;
     },
     moveBar () {
-      const { offsettingBar } = this;
+      const { offsettingBar, content, container, wrapper } = this;
 
       // Y axis (vertical)
-      const ownHeight = offsettingBar ? this.container.clientHeight : this.content.clientHeight;
-      const totalHeight = this.content.scrollHeight;
+      const ownHeight = content.clientHeight;
+      const totalHeight = content.scrollHeight;
 
       // X axis (horizontal)
-      const ownWidth = offsettingBar ? this.container.clientWidth : this.content.clientWidth;
-      const totalWidth = this.content.scrollWidth;
+      const ownWidth = content.clientWidth;
+      const totalWidth = content.scrollWidth;
 
       //Update scroll ratio
       // In EDGE in some places has different in 1px (BAD FIX);
@@ -99,23 +99,24 @@ export default {
       this.hiddenY = this.scrollRatioY >= 1;
 
       if(!this.hiddenX) {
+        const wrapperWidth = offsettingBar ? container.clientWidth : wrapper.clientWidth;
         this.barXStyles = {
-          left: (ownWidth * (this.content.scrollLeft / totalWidth)).toFixed(0) + 'px',
+          left: (wrapperWidth * (content.scrollLeft / totalWidth)).toFixed(0) + 'px',
           width: this.hiddenY
-            ? (this.wrapper.clientWidth * this.scrollRatioX).toFixed(0) + 'px'
-            : (this.wrapper.clientWidth * this.scrollRatioX).toFixed(0) - 10 + 'px',
+            ? (wrapperWidth * this.scrollRatioX).toFixed(0) + 'px'
+            : (wrapperWidth * this.scrollRatioX).toFixed(0) - 10 + 'px',
         };
       }
 
       if(!this.hiddenY) {
-        const wrapperHeight = offsettingBar ? this.container.clientHeight : this.wrapper.clientHeight;
+        const wrapperHeight = offsettingBar ? container.clientHeight : wrapper.clientHeight;
         const height = this.hiddenX
           ? (wrapperHeight * this.scrollRatioY).toFixed(0) + 'px'
           : (wrapperHeight * this.scrollRatioY).toFixed(0) - 10 + 'px';
 
         this.barYStyles = {
-          height: height,
-          top: (ownHeight * (this.content.scrollTop / totalHeight)).toFixed(0) + 'px',
+          height,
+          top: (wrapperHeight * (content.scrollTop / totalHeight)).toFixed(0) + 'px',
         };
       }
     },
@@ -245,11 +246,13 @@ export default {
 <style lang="scss">
 .vs {
   &-container {
+    box-sizing: border-box;
     overflow: hidden;
     position: relative;
   }
 
   &-wrapper {
+    box-sizing: border-box;
     overflow: hidden;
     width: 100%;
     height: 100%;
@@ -257,10 +260,10 @@ export default {
   }
 
   &-content {
+    box-sizing: border-box;
     height: 100%;
     width: 100%;
     overflow: scroll;
-    box-sizing: border-box;
     -ms-overflow-style: none; //hide scrollbar in IE 10+
     -webkit-overflow-scrolling: touch; // Smooth scroll iOS
     scrollbar-width: none; //hide scrollbar in FireFox
