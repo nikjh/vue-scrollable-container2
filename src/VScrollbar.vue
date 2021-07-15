@@ -6,15 +6,18 @@ export default {
       type: String,
       default: 'div',
     },
-    //If important needs using custom styles of element
-    customStyles: {
+    contentStyle: {
       type: Object,
       default: () => ({}),
     },
-    scrollOffsetHeight: {
-      type: [Number, String],
-      default: null,
+    barColor: {
+      type: String,
+      default: 'rgba(26, 115, 232, .6)',
     },
+    offsettingBar: {
+      type: Boolean,
+      default: false,
+    }
   },
   data () {
     return {
@@ -40,53 +43,56 @@ export default {
     };
   },
   computed: {
-    container () { return this.$refs.container; },
-    wrapper () { return this.$refs.wrapper; },
-    barX () { return this.$refs.barX; },
-    barY () { return this.$refs.barY; },
-    content () { return this.$refs.content; },
+    container () {
+      return this.$refs.container;
+    },
+    wrapper () {
+      return this.$refs.wrapper;
+    },
+    barX () {
+      return this.$refs.barX;
+    },
+    barY () {
+      return this.$refs.barY;
+    },
+    content () {
+      return this.$refs.content;
+    },
   },
   mounted () {
-    this.init();
+    this.resize();
+    window.addEventListener('resize', this.optimizedResize);
   },
   destroyed () {
     window.removeEventListener('resize', this.optimizedResize);
   },
   methods: {
-    init () {
-      this.createStyles();
-      this.$nextTick(() => {
-        this.moveBar();
-      });
-
-      window.addEventListener('resize', this.optimizedResize);
-    },
     createStyles (ev) {
-      // * If container has max height paramethr we need must add height param for enable scrollbar
-      if(this.wrapper.clientHeight > this.container.clientHeight || (ev && ev.type == 'resize')) {
+      // * If container has max height parameter we need must add height param for enable scrollbar
+      if(this.wrapper.clientHeight > this.container.clientHeight || (ev && ev.type === 'resize')) {
         const computedContainer = window.getComputedStyle(this.container);
         this.wrapperStyles = {
           height: (this.container.clientHeight - Number.parseInt(computedContainer['padding-bottom']) - Number.parseInt(computedContainer['padding-top']))+'px',
         };
       }
 
-      this.contentStyles = this.customStyles.content;
+      this.contentStyles = this.contentStyle;
     },
     moveBar () {
+      const { offsettingBar } = this;
+
       // Y axis (vertical)
-      const ownHeight = this.scrollOffsetHeight ? Number(this.scrollOffsetHeight) : this.content.clientHeight;
+      const ownHeight = offsettingBar ? this.container.clientHeight : this.content.clientHeight;
       const totalHeight = this.content.scrollHeight;
 
       // X axis (horizontal)
-      const ownWidth = this.content.clientWidth;
+      const ownWidth = offsettingBar ? this.container.clientWidth : this.content.clientWidth;
       const totalWidth = this.content.scrollWidth;
 
       //Update scroll ratio
       // In EDGE in some places has different in 1px (BAD FIX);
       this.scrollRatioY = ((totalHeight - ownHeight) > 1) ? (ownHeight / totalHeight) : 1;
       this.scrollRatioX = ((totalWidth - ownWidth) > 1) ? (ownWidth / totalWidth) : 1;
-      //this.scrollRatioX = ownWidth / totalWidth;
-      //this.scrollRatioY = ownHeight / totalHeight;
 
       //Check ratio num for show/hide bars
       this.hiddenX = this.scrollRatioX >= 1;
@@ -102,7 +108,7 @@ export default {
       }
 
       if(!this.hiddenY) {
-        const wrapperHeight = this.scrollOffsetHeight ? this.container.clientHeight : this.wrapper.clientHeight;
+        const wrapperHeight = offsettingBar ? this.container.clientHeight : this.wrapper.clientHeight;
         const height = this.hiddenX
           ? (wrapperHeight * this.scrollRatioY).toFixed(0) + 'px'
           : (wrapperHeight * this.scrollRatioY).toFixed(0) - 10 + 'px';
@@ -113,27 +119,28 @@ export default {
         };
       }
     },
-
+    resize (ev) {
+      this.createStyles(ev);
+      this.$nextTick(this.moveBar);
+    },
     optimizedResize (ev) {
-      if (this.timeoutResize) window.cancelAnimationFrame(this.timeoutResize);
+      if (this.timeoutResize) {
+        window.cancelAnimationFrame(this.timeoutResize);
+      }
 
       this.timeoutResize = window.requestAnimationFrame(() => {
-        this.createStyles(ev);
-        this.$nextTick(() => {
-          this.moveBar();
-        });
+        this.resize(ev);
       });
     },
     optimizedScroll () {
-      if (this.timeoutScroll) window.cancelAnimationFrame(this.timeoutScroll);
-
-      this.timeoutScroll = window.requestAnimationFrame(() => {
-        this.moveBar();
-      });
+      if (this.timeoutScroll) {
+        window.cancelAnimationFrame(this.timeoutScroll);
+      }
+      this.timeoutScroll = window.requestAnimationFrame(this.moveBar);
     },
 
     mousedown (axis, ev) {
-      if(axis=='x') {
+      if (axis === 'x') {
         this.lastPageX = ev.pageX;
       } else {
         this.lastPagey = ev.pageY;
@@ -148,7 +155,7 @@ export default {
       return false;
     },
     drag (ev) {
-      if(this.currentAxis=='x') {
+      if (this.currentAxis === 'x') {
         const delta = ev.pageX - this.lastPageX;
         this.lastPageX = ev.pageX;
         this.content.scrollLeft += delta / this.scrollRatioX;
@@ -181,8 +188,11 @@ export default {
     const barX = !this.hiddenX ?
       h('div', {
         ref: 'barX',
-        class: [ 'vs-scroll', 'vs-scroll--x', { 'vs-grabbed': this.currentAxis == 'x' && this.dragging } ],
-        style: this.barXStyles,
+        class: [ 'vs-scroll', 'vs-scroll--x', { 'vs-grabbed': this.currentAxis === 'x' && this.dragging } ],
+        style: {
+          ...this.barXStyles,
+          background: this.barColor,
+        },
         on: {
           mousedown: ev => this.mousedown('x', ev),
         },
@@ -193,8 +203,11 @@ export default {
     const barY = !this.hiddenY ?
       h('div', {
         ref: 'barY',
-        class: [ 'vs-scroll', 'vs-scroll--y', { 'vs-grabbed': this.currentAxis == 'y' && this.dragging } ],
-        style: this.barYStyles,
+        class: [ 'vs-scroll', 'vs-scroll--y', { 'vs-grabbed': this.currentAxis === 'y' && this.dragging } ],
+        style: {
+          ...this.barYStyles,
+          background: this.barColor,
+        },
         on: {
           mousedown: ev => this.mousedown('y', ev),
         },
@@ -219,7 +232,7 @@ export default {
             on: {
               scroll: this.optimizedScroll,
             },
-          }, [ this.$slots.default ]),
+          }, [this.$slots.default]),
         ]),
         barX,
         barY,
@@ -230,8 +243,6 @@ export default {
 </script>
 
 <style lang="scss">
-$color-scrollbar: #1a73e8;
-
 .vs {
   &-container {
     overflow: hidden;
@@ -251,6 +262,7 @@ $color-scrollbar: #1a73e8;
     overflow: scroll;
     box-sizing: border-box;
     -ms-overflow-style: none; //hide scrollbar in IE 10+
+    -webkit-overflow-scrolling: touch; // Smooth scroll iOS
     scrollbar-width: none; //hide scrollbar in FireFox
 
     &::-webkit-scrollbar { //hide scrollbar in safari, chrome and other webkit based browsers
@@ -260,7 +272,6 @@ $color-scrollbar: #1a73e8;
   }
 
   &-scroll {
-    background: rgba($color-scrollbar, .6);
     position: absolute;
     border-radius: 4px;
     z-index: 50;
